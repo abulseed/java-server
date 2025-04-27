@@ -1,9 +1,31 @@
 version: '3.8'
+
 services:
   nginx:
-    image: nginx:stable
+    build: .
     ports:
-      - "8081:80"
+      - "8081:80"  # You can now access NGINX via localhost:8081
     restart: always
+
+  # app:
+  #   build: ./app
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/ecommerce
+  #     SPRING_DATASOURCE_USERNAME: postgres
+  #     SPRING_DATASOURCE_PASSWORD: postgres
+
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
     volumes:
-      - ./nginx.conf:/etc/nginx.conf:ro
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
