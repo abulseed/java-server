@@ -6,6 +6,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.annotation.*;
 
+import lombok.RequiredArgsConstructor;
+
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -14,13 +16,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/products")
+@RequiredArgsConstructor
 public class ProductController {
 
     private final ProductService service;
-
-    public ProductController(ProductService service) {
-        this.service = service;
-    }
 
     @PostMapping
     public ResponseEntity<Product> create(@RequestBody Map<String, Object> request) {
@@ -32,8 +31,9 @@ public class ProductController {
         List<String> photoUrls = photoUrlsRaw == null ? null
                 : photoUrlsRaw.stream().map(Object::toString).collect(Collectors.toList());
 
-        Product product = service.createProduct(name, description, price, quantity, photoUrls);
-        return ResponseEntity.ok(product);
+        Product product = new Product(UUID.randomUUID(), name, description, price, quantity, photoUrls);
+        service.createProduct(product);
+        return ResponseEntity.ok().body(product);
     }
 
     @GetMapping("/{id}")
@@ -58,14 +58,15 @@ public class ProductController {
         List<String> photoUrls = photoUrlsRaw == null ? null
                 : photoUrlsRaw.stream().map(Object::toString).collect(Collectors.toList());
 
-        return service.updateProduct(id, name, description, price, quantity, photoUrls)
+        Product product = new Product(id, name, description, price, quantity, photoUrls);
+        return service.updateProduct(product)
                       .map(ResponseEntity::ok)
                       .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public ResponseEntity<String> delete(@PathVariable UUID id) {
         service.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().body("Deleted product successfully");
     }
 }

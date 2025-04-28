@@ -4,21 +4,21 @@ import org.example.model.Product;
 import org.example.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
 public class ProductService {
 
     private final ProductRepository repository;
 
-    public ProductService(ProductRepository repository) {
-        this.repository = repository;
-    }
-
-    public Product createProduct(String name, String description, java.math.BigDecimal price, int quantity, List<String> photoUrls) {
-        Product product = new Product(UUID.randomUUID(), name, description, price, quantity, photoUrls);
+    public Product createProduct(Product product) {
         return repository.save(product);
     }
 
@@ -30,10 +30,9 @@ public class ProductService {
         return repository.findAll();
     }
 
-    public Optional<Product> updateProduct(UUID id, String name, String description, java.math.BigDecimal price, int quantity, List<String> photoUrls) {
-        Product updated = new Product(id, name, description, price, quantity, photoUrls);
-        return repository.findById(id)
-                         .map(p -> repository.save(updated));
+    public Optional<Product> updateProduct(Product product) {
+        return repository.findById(product.getId())
+                .map(p -> repository.save(product));
     }
 
     public void deleteProduct(UUID id) {
