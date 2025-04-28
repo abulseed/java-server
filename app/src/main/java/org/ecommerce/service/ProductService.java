@@ -1,7 +1,7 @@
-package org.example.service;
+package org.ecommerce.service;
 
-import org.example.model.Product;
-import org.example.repository.ProductRepository;
+import org.ecommerce.model.Product;
+import org.ecommerce.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;

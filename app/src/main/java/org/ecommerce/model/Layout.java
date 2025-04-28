@@ -1,4 +1,4 @@
-package org.example.model;
+package org.ecommerce.model;
 
 public enum Layout {
     GRID,

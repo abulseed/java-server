@@ -2,9 +2,13 @@ version: '3.8'
 
 services:
   nginx:
-    build: .
+    image: nginx:stable-alpine
     ports:
-      - "8081:80"  # You can now access NGINX via localhost:8081
+      - "8081:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
     restart: always
 
   # app:

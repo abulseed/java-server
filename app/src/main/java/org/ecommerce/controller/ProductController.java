@@ -1,7 +1,7 @@
-package org.example.controller;
+package org.ecommerce.controller;
 
-import org.example.model.Product;
-import org.example.service.ProductService;
+import org.ecommerce.model.Product;
+import org.ecommerce.service.ProductService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.NumberUtils;
 import org.springframework.web.bind.annotation.*;
@@ -60,8 +60,8 @@ public class ProductController {
 
         Product product = new Product(id, name, description, price, quantity, photoUrls);
         return service.updateProduct(product)
-                      .map(ResponseEntity::ok)
-                      .orElse(ResponseEntity.notFound().build());
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
