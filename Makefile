@@ -16,3 +16,4 @@ stop:
 	docker compose -f docker-compose.yml down
 	# Kill Java app (optional, force kill by port)
 	@lsof -ti :8080 | xargs kill -9 || true
+	@lsof -ti :8081 | xargs kill -9 || true

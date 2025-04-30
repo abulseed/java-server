@@ -13,3 +13,4 @@ plugins {
 
 rootProject.name = 'java-server'
 include('app')
+include('auth')

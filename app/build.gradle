@@ -45,6 +45,9 @@ java {
 bootRun {
     sourceResources sourceSets.main
     jvmArgs = ['-Dspring.devtools.restart.enabled=true']
+    debugOptions {
+        port = 5005
+    }
 }
 
 test {
