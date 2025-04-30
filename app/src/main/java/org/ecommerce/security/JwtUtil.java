@@ -1,4 +1,4 @@
-package org.ecommerce.auth.security;
+package org.ecommerce.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.function.Function;
 
 @Component
@@ -32,10 +31,8 @@ public class JwtUtil {
   public String generateToken(String username, List<String> roles) {
     Date now = new Date();
     Date expiry = new Date(now.getTime() + expirationMillis);
-    String jti = UUID.randomUUID().toString();
 
     return Jwts.builder()
-        .setId(jti)
         .setSubject(username)
         .claim("roles", roles)
         .setIssuedAt(now)
@@ -66,11 +63,6 @@ public class JwtUtil {
   /** Extract id from token */
   public String extractId(String token) {
     return extractClaim(token, Claims::getId);
-  }
-
-  /** Extract expiration from token */
-  public Date extractExpiration(String token) {
-    return extractClaim(token, Claims::getExpiration);
   }
 
   /** Extract roles claim from token */

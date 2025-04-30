@@ -1,4 +1,4 @@
-package org.ecommerce.auth.security;
+package org.ecommerce.security;
 
 import java.io.IOException;
 import java.util.List;
@@ -21,6 +21,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 
 @Component
 @Slf4j
@@ -29,8 +31,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
   private JwtUtil jwtUtil;
   @Autowired
   private RedisTemplate<String, Boolean> redis;
-  @Autowired
-  private UserDetailsService userDetailsService;
 
   @Override
   protected void doFilterInternal(
@@ -41,7 +41,6 @@ public class JwtTokenFilter extends OncePerRequestFilter {
       String header = req.getHeader("Authorization");
       if (header != null && header.startsWith("Bearer ")) {
         String token = header.substring(7);
-
         // Validate token, extract claims
         boolean valid = jwtUtil.validateToken(token);
         if (!valid) {
@@ -59,21 +58,12 @@ public class JwtTokenFilter extends OncePerRequestFilter {
           res.getWriter().write("{\"error\": \"Revoked token\"}");
           return;
         }
-        // Build Authentication
+
         String username = jwtUtil.extractUsername(token);
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null,
-            userDetails.getAuthorities());
-        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
-
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        // List<String> roles = jwtUtil.extractRoles(token);
-        // var auth = new UsernamePasswordAuthenticationToken(
-        // username,
-        // null,
-        // roles.stream().map(SimpleGrantedAuthority::new).toList());
-        // SecurityContextHolder.getContext().setAuthentication(auth);
+        List<String> roles = jwtUtil.extractRoles(token);
+        var auth = new UsernamePasswordAuthenticationToken(
+            username, null, roles.stream().map(SimpleGrantedAuthority::new).toList());
+        SecurityContextHolder.getContext().setAuthentication(auth);
       }
     } catch (Exception e) {
       log.error("Cannot set user authentication: {}", e);

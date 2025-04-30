@@ -1,4 +1,4 @@
-package org.ecommerce.auth.handler;
+package org.ecommerce.security;
 
 import java.io.IOException;
 
@@ -18,7 +18,6 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
   @Override
   public void commence(HttpServletRequest request, HttpServletResponse response,
       AuthenticationException authException) throws IOException, ServletException {
-    log.error("Unauthorized error: {}", authException.getMessage());
     response.setContentType("application/json");
     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     response.getWriter().write("{\"error\": \"Unauthorized\", \"message\": \"" + authException.getMessage() + "\"}");
